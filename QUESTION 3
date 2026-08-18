@@ -1,0 +1,115 @@
+print("V.SALMAN")
+import matplotlib.pyplot as plt
+
+image = [
+    [10, 12, 11],
+    [10, 250, 12],
+    [11, 13, 12]
+]
+
+rows = len(image)
+columns = len(image[0])
+
+updated_image = [row[:] for row in image]
+
+# One iteration of smoothing
+for i in range(rows):
+
+    for j in range(columns):
+
+        neighbors = []
+
+        if i > 0:
+            neighbors.append(image[i - 1][j])
+
+        if i < rows - 1:
+            neighbors.append(image[i + 1][j])
+
+        if j > 0:
+            neighbors.append(image[i][j - 1])
+
+        if j < columns - 1:
+            neighbors.append(image[i][j + 1])
+
+        updated_image[i][j] = round(
+            sum(neighbors) / len(neighbors)
+        )
+
+print("MARKOV RANDOM FIELD - IMAGE DENOISING")
+print("--------------------------------------")
+
+print("\nOriginal Image:")
+for row in image:
+    print(row)
+
+print("\nUpdated Image:")
+for row in updated_image:
+    print(row)
+
+# Draw pixel graph
+plt.figure(figsize=(8, 7))
+
+positions = {}
+
+# Pixel positions
+for i in range(rows):
+    for j in range(columns):
+        positions[(i, j)] = (j, rows - i)
+
+# Draw connections
+for i in range(rows):
+    for j in range(columns):
+
+        # Right neighbor
+        if j < columns - 1:
+            x1, y1 = positions[(i, j)]
+            x2, y2 = positions[(i, j + 1)]
+
+            plt.plot(
+                [x1, x2],
+                [y1, y2],
+                linewidth=2
+            )
+
+        # Bottom neighbor
+        if i < rows - 1:
+            x1, y1 = positions[(i, j)]
+            x2, y2 = positions[(i + 1, j)]
+
+            plt.plot(
+                [x1, x2],
+                [y1, y2],
+                linewidth=2
+            )
+
+# Draw pixels
+for i in range(rows):
+    for j in range(columns):
+
+        x, y = positions[(i, j)]
+
+        plt.scatter(
+            x, y,
+            s=2500
+        )
+
+        plt.text(
+            x, y,
+            str(image[i][j]),
+            ha="center",
+            va="center",
+            fontsize=12,
+            fontweight="bold"
+        )
+
+plt.title(
+    "Markov Random Field - Pixel Graph\n"
+    "Noisy pixel 250 → 12 after smoothing",
+    fontsize=14
+)
+
+plt.xlim(0.5, 3.5)
+plt.ylim(0.5, 3.5)
+plt.xticks([])
+plt.yticks([])
+plt.show()
