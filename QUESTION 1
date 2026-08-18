@@ -1,0 +1,61 @@
+print("V.SALMAN")
+import matplotlib.pyplot as plt
+P_diabetes = {
+    (0, 0): 0.05,
+    (0, 1): 0.30,
+    (1, 0): 0.20,
+    (1, 1): 0.80
+}
+
+obesity = 1
+high_sugar = 1
+
+probability = P_diabetes[(obesity, high_sugar)]
+
+print("BAYESIAN NETWORK - DISEASE PREDICTION")
+print("--------------------------------------")
+print("Obesity      : Yes")
+print("High Sugar   : Yes")
+print("Diabetes Probability :", probability)
+print("Diabetes Percentage  :", probability * 100, "%")
+
+# Draw Bayesian Network
+plt.figure(figsize=(8, 5))
+
+positions = {
+    "Obesity": (1, 2),
+    "High Sugar": (3, 2),
+    "Diabetes": (2, 1)
+}
+
+# Draw nodes
+for node, (x, y) in positions.items():
+    plt.scatter(x, y, s=3000)
+    plt.text(x, y, node, ha="center", va="center",
+             fontsize=12, fontweight="bold")
+
+# Draw arrows
+plt.annotate(
+    "",
+    xy=positions["Diabetes"],
+    xytext=positions["Obesity"],
+    arrowprops=dict(arrowstyle="->", linewidth=2)
+)
+
+plt.annotate(
+    "",
+    xy=positions["Diabetes"],
+    xytext=positions["High Sugar"],
+    arrowprops=dict(arrowstyle="->", linewidth=2)
+)
+
+plt.title(
+    "Bayesian Network: Disease Prediction\n"
+    "P(Diabetes | Obesity=Yes, High Sugar=Yes) = 80%",
+    fontsize=13
+)
+
+plt.xlim(0, 4)
+plt.ylim(0, 3)
+plt.axis("off")
+plt.show()
