@@ -1,0 +1,138 @@
+print("V.SALMAN")
+
+import matplotlib.pyplot as plt
+
+# Training data
+training_sentences = [
+    ["John", "ordered", "Laptop", "order", "A123"],
+    ["Alice", "bought", "Phone", "order", "B456"],
+    ["David", "purchased", "Tablet", "order", "C789"]
+]
+
+training_labels = [
+    ["CUSTOMER", "O", "PRODUCT", "O", "ORDER_ID"],
+    ["CUSTOMER", "O", "PRODUCT", "O", "ORDER_ID"],
+    ["CUSTOMER", "O", "PRODUCT", "O", "ORDER_ID"]
+]
+
+word_labels = {}
+
+for sentence, labels in zip(
+    training_sentences,
+    training_labels
+):
+
+    for word, label in zip(sentence, labels):
+        word_labels[word.lower()] = label
+
+
+def predict_label(word, position):
+
+    if word.lower() in word_labels:
+        return word_labels[word.lower()]
+
+    if len(word) > 1:
+        if word[0].isalpha() and word[1:].isdigit():
+            return "ORDER_ID"
+
+    products = [
+        "laptop",
+        "phone",
+        "tablet",
+        "computer",
+        "mouse"
+    ]
+
+    if word.lower() in products:
+        return "PRODUCT"
+
+    if position == 0:
+        return "CUSTOMER"
+
+    return "O"
+
+
+# Test sentence
+test_sentence = [
+    "Salman",
+    "ordered",
+    "Laptop",
+    "order",
+    "D123"
+]
+
+predicted_labels = []
+
+for i, word in enumerate(test_sentence):
+    predicted_labels.append(
+        predict_label(word, i)
+    )
+
+print("CONDITIONAL RANDOM FIELD - NER")
+print("------------------------------")
+
+for word, label in zip(
+    test_sentence,
+    predicted_labels
+):
+    print(word, "->", label)
+
+# Draw CRF sequence graph
+plt.figure(figsize=(12, 5))
+
+x_positions = range(len(test_sentence))
+
+# Draw connections
+for i in range(len(test_sentence) - 1):
+
+    plt.annotate(
+        "",
+        xy=(i + 1, 1),
+        xytext=(i, 1),
+        arrowprops=dict(
+            arrowstyle="->",
+            linewidth=2
+        )
+    )
+
+# Draw words
+for i, word in enumerate(test_sentence):
+
+    plt.scatter(
+        i, 1,
+        s=2500
+    )
+
+    plt.text(
+        i, 1,
+        word,
+        ha="center",
+        va="center",
+        fontsize=10,
+        fontweight="bold"
+    )
+
+    plt.text(
+        i, 0.45,
+        predicted_labels[i],
+        ha="center",
+        fontsize=10
+    )
+
+plt.title(
+    "Conditional Random Field - Named Entity Recognition",
+    fontsize=14
+)
+
+plt.text(
+    2,
+    0.05,
+    "Words → Predicted Entity Labels",
+    ha="center",
+    fontsize=11
+)
+
+plt.xlim(-0.7, 4.7)
+plt.ylim(-0.2, 1.5)
+plt.axis("off")
+plt.show()
